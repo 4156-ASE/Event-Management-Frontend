@@ -19,7 +19,6 @@ const ProfileForm = () => {
 
   // const user_id = localStorage.getItem('pid');
   const { profile } = useContext(ProfileContext);
-
   const { register, handleSubmit } = useForm<ProfileData>({
     defaultValues: {
       first_name: profile?.first_name,
@@ -31,8 +30,12 @@ const ProfileForm = () => {
   const handleUpdate = handleSubmit((data) => {
     // TODO: replace user id
     axios
-      .patch('/users/1', data)
+      .patch('/users/me/' + localStorage.getItem('userID'), data, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true
+    })
       .then((res) => {
+        console.log(res)
         alert('Profile updated successfully');
       })
       .catch((err) => {

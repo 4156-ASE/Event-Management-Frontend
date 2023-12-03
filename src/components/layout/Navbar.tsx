@@ -7,21 +7,34 @@ import {
   IoPersonCircleOutline,
   IoLogOut,
 } from 'react-icons/io5';
-import { Fragment, useContext } from 'react';
+import { Fragment, useContext, useEffect } from 'react';
 import { AuthContext } from '../auth/AuthContextProvider';
+import axios from 'axios';
 
 const Navbar = () => {
   const { auth, setAuth } = useContext(AuthContext);
 
-  const handleSignOut = () => {
-    setAuth(null);
-    localStorage.removeItem('v_user');
+  const handleSignOut = async () => {
+    try {
+    const resp = await axios.get('/auth/signout', {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
+  });
+      if (resp.data.status === 'success') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userID');
+        setAuth(localStorage.getItem('token'))
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert("Log Out not Succeeded");
+    }
   };
 
   const unauthLinks = (
     <ul>
       <li>
-        <Link to="/">
+        <Link to="/signin">
           <div className="center">
             <FiLogIn size={30} />
             <div className="center p-title">
@@ -32,7 +45,7 @@ const Navbar = () => {
       </li>
     </ul>
   );
-
+  
   const authLinks = (
     <ul>
       <li>
@@ -87,7 +100,30 @@ const Navbar = () => {
       </li>
     </ul>
   );
-
+  const adminLinks = (
+    <ul>
+      <li>
+        <Link to="/profile">
+          <div className="center">
+            <IoPersonCircleOutline size={30} />
+            <div className="center p-title">
+              <span>Profile</span>
+            </div>
+          </div>
+        </Link>
+      </li>
+      <li>
+        <Link to="/">
+          <div className="center" onClick={handleSignOut}>
+            <IoLogOut size={30} />
+            <div className="center p-title">
+              <span>Logout</span>
+            </div>
+          </div>
+        </Link>
+      </li>
+    </ul>
+  );
   return (
     <nav className="navbar bg-dark">
       <Link to="/">
@@ -95,8 +131,7 @@ const Navbar = () => {
           <span className="main-title">Restaurant Reservation Organizer</span>
         </div>
       </Link>
-
-      {<Fragment>{auth != null ? authLinks : unauthLinks}</Fragment>}
+      {<Fragment>{auth && localStorage.getItem('role') === 'admin' ? adminLinks :  auth && localStorage.getItem('role') === 'regular' ? authLinks : unauthLinks}</Fragment>}
     </nav>
   );
 };

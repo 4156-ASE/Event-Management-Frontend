@@ -28,16 +28,13 @@ const ProfileContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const getProfile = async () => {
-      // if (user_id == null) {
-      //   console.log('getprofile error: user_id == null');
-      //   return;
-      // }
-
       axios
-        .get(`/users/1`)
+        .get('/users/me/' + localStorage.getItem('userID'), {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+      })
         .then((res) => {
-          const data = res.data;
-          console.log('user data: ', data);
+          const data = res.data.user;
           setProfile(data);
           setIsReady(true);
         })
