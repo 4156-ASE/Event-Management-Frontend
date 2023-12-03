@@ -28,7 +28,6 @@ const ProfileForm = () => {
   });
 
   const handleUpdate = handleSubmit((data) => {
-    // TODO: replace user id
     axios
       .patch('/users/me/' + localStorage.getItem('userID'), data, {
         headers: { 'Content-Type': 'application/json' },

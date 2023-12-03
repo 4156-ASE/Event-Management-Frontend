@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { CgEventbrite } from 'react-icons/cg';
-import { FiLogIn } from 'react-icons/fi';
+import { FiCheckSquare, FiLogIn } from 'react-icons/fi';
 import {
   IoTodayOutline,
   IoAddCircleOutline,
@@ -39,6 +39,14 @@ const Navbar = () => {
             <FiLogIn size={30} />
             <div className="center p-title">
               <span>Sign In</span>
+            </div>
+          </div>
+        </Link>
+        <Link to="/signup">
+          <div className="center">
+            <FiCheckSquare size={30} />
+            <div className="center p-title">
+              <span>Register</span>
             </div>
           </div>
         </Link>
