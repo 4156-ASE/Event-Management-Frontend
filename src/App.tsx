@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import './App.css';
+
 import Navbar from './components/layout/Navbar';
 import CreateEventForm from './components/event/CreateEventForm';
 import Events from './components/event/Events';
 import Profile from './components/profile/Profile';
-import CreateProfileForm from './components/profile/CreateProfileForm';
+import SignUp from './components/user/SignUp';
 import Landing from './components/layout/Landing';
 import SingleEvent from './components/event/SingleEvent';
-import AuthContextProvider, { AuthContext } from './components/auth/AuthContextProvider';
+import AuthContextProvider from './components/auth/AuthContextProvider';
 import SingleEventDetails from './components/event/SingleEventDetails';
 import Signin from './components/user/SignIn';
 import { useEffect } from 'react';
@@ -53,9 +53,8 @@ const App = () => {
           <Route path="/event/:id" element={<SingleEvent />} />
           <Route path="/event/details/:id" element={<SingleEventDetails />} />
           <Route path="/signin" element={<Signin />} />
-          <Route path="/signup" element={<CreateProfileForm />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
-        <Navbar />
       </BrowserRouter>
     </AuthContextProvider>
   );

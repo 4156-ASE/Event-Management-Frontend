@@ -16,18 +16,18 @@ const Navbar = () => {
 
   const handleSignOut = async () => {
     try {
-    const resp = await axios.get('/auth/signout', {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true
-  });
+      const resp = await axios.get('/auth/signout', {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      });
       if (resp.data.status === 'success') {
         localStorage.removeItem('token');
         localStorage.removeItem('userID');
-        setAuth(localStorage.getItem('token'))
+        setAuth(localStorage.getItem('token'));
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert("Log Out not Succeeded");
+      alert('Log Out not Succeeded');
     }
   };
 
@@ -53,7 +53,7 @@ const Navbar = () => {
       </li>
     </ul>
   );
-  
+
   const authLinks = (
     <ul>
       <li>
@@ -133,14 +133,18 @@ const Navbar = () => {
     </ul>
   );
   return (
-    <nav className="navbar bg-dark">
+    <div className="flex h-40 w-full justify-between px-8 items-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
       <Link to="/">
-        <div className="center">
-          <span className="main-title">Restaurant Reservation Organizer</span>
-        </div>
+        <span className="main-title font-bold text-2xl">Restaurant Reservation Organizer</span>
       </Link>
-      {<Fragment>{auth && localStorage.getItem('role') === 'admin' ? adminLinks :  auth && localStorage.getItem('role') === 'regular' ? authLinks : unauthLinks}</Fragment>}
-    </nav>
+      <div>
+        {auth && localStorage.getItem('role') === 'admin'
+          ? adminLinks
+          : auth && localStorage.getItem('role') === 'regular'
+          ? authLinks
+          : unauthLinks}
+      </div>
+    </div>
   );
 };
 
