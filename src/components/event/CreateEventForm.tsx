@@ -1,122 +1,49 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Grid } from '@mui/material';
-
-type FormData = {
-  title: string;
-  start_time: string;
-  end_time: string;
-  location: string;
-  desc: string;
-};
+import React from 'react';
+import { EventCreateReq } from '../../utils/dto';
+import { Button, Form, Toast } from '@douyinfe/semi-ui';
+import { APIs } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
 
 const CreateEventForm: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
-    title: '',
-    start_time: '',
-    end_time: '',
-    location: '',
-    desc: '',
-  });
+  const navigate = useNavigate();
+  const handleSubmit = async (values: EventCreateReq) => {
+    const response = await APIs.createEvent(values);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const postData = {
-      ...formData,
-      // TODO: change to userID
-      host: 1,
-    };
-
-    console.log(postData);
-
-    try {
-      const response = await axios.post('/events', postData);
-      console.log(response.data);
-      alert('Reservation created successfully');
-    } catch (error) {
-      console.error('Error submitting form:', error);
+    if (response.status !== 201) {
+      Toast.error('Failed to create');
+      console.error(response);
+      return;
     }
+
+    Toast.success('Reservation created successfully');
+    navigate('/events');
   };
 
   return (
-    <div className="content flex-center">
-      <div style={{ width: '60%' }}>
-        <div className="flex-center">
-          <h1 className="large text-primary">Create a New Reservation</h1>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <div className="form">
-            <Grid container justifyContent="flex-start">
-              <h4>Title</h4>
-            </Grid>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form">
-            <Grid container justifyContent="flex-start">
-              <h4>Description</h4>
-            </Grid>
-            <input type="text" name="desc" value={formData.desc} onChange={handleChange} required />
-          </div>
-          
-          <div className="form">
-            <Grid container justifyContent="flex-start">
-              <h4>Start Time</h4>
-            </Grid>
-            <input
-              type="text"
-              name="start_time"
-              value={formData.start_time}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form">
-            <Grid container justifyContent="flex-start">
-              <h4>End Time</h4>
-            </Grid>
-            <input
-              type="text"
-              name="end_time"
-              value={formData.end_time}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form">
-            <Grid container justifyContent="flex-start">
-              <h4>Location</h4>
-            </Grid>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <Grid container justifyContent="flex-start">
-            <button className="btn" type="submit">
-              Create
-            </button>
-          </Grid>
-        </form>
+    <Form layout="vertical" className="mx-8 my-12 w-96" autoScrollToError onSubmit={handleSubmit}>
+      <h1 className="font-bold text-3xl">Create a New Reservation</h1>
+      <Form.Input field="title" label="Title" placeholder="Enter your title" />
+      <Form.Input field="desc" label="Description" placeholder="Enter your description" />
+      <Form.Input field="location" label="Location" placeholder="Enter your location" />
+      <Form.DatePicker
+        type="dateTime"
+        field="start_time"
+        label="Start Time"
+        placeholder="Enter your start time"
+      />
+      <Form.DatePicker
+        type="dateTime"
+        field="end_time"
+        label="End Time"
+        placeholder="Enter your end time"
+      />
+      <div className="flex space-x-8 items-end">
+        <Button htmlType="submit" type="primary" theme="solid">
+          Create
+        </Button>
+        <Button onClick={() => navigate(-1)}>Back</Button>
       </div>
-    </div>
+    </Form>
   );
 };
 

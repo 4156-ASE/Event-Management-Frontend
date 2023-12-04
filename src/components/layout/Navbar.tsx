@@ -29,16 +29,31 @@ const Navbar = () => {
   };
 
   const footer = auth ? (
-    <Dropdown
-      position="bottomRight"
-      render={
-        <Dropdown.Menu className="w-36">
-          <Dropdown.Item onClick={handleSignOut}>Logout</Dropdown.Item>
-        </Dropdown.Menu>
-      }
-    >
-      <Button theme='solid' className="bg-orange-400">User</Button>
-    </Dropdown>
+    <div className="space-x-6">
+      <Link to="/create">
+        <Button
+          theme="solid"
+          className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
+        >
+          Reserve a seat!
+        </Button>
+      </Link>
+      <Dropdown
+        position="bottomRight"
+        render={
+          <Dropdown.Menu className="w-36">
+            <Dropdown.Item onClick={handleSignOut}>Logout</Dropdown.Item>
+          </Dropdown.Menu>
+        }
+      >
+        <Button
+          theme="solid"
+          className="mr-5 text-center font-open-sans bg-ux-accent-03 hover:bg-sb-link-hover h-sbl px-sbml font-medium rounded-[4px] text-lg"
+        >
+          User
+        </Button>
+      </Dropdown>
+    </div>
   ) : (
     <Dropdown
       position="bottomRight"
@@ -53,7 +68,12 @@ const Navbar = () => {
         </Dropdown.Menu>
       }
     >
-      <Button theme='solid' className="bg-orange-400">SignUp/SignIn</Button>
+      <Button
+        theme="solid"
+        className="mr-5 text-center font-open-sans bg-ux-accent-03 hover:bg-sb-link-hover h-sbl px-sbml font-medium rounded-[4px] text-lg"
+      >
+        SignUp/SignIn
+      </Button>
     </Dropdown>
   );
 

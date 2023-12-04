@@ -58,3 +58,15 @@ export interface EventDetail {
 
   participants: UserDetail[];
 }
+
+export interface EventCreateReq {
+  title: string;
+
+  desc: string;
+
+  start_time: string;
+
+  end_time: string;
+
+  location: string;
+}
