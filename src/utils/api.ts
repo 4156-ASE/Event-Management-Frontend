@@ -22,4 +22,8 @@ export const APIs = {
   async createEvent(data: EventCreateReq) {
     return await request.post<EventDetail>('/events', data);
   },
+  /** delete an event */
+  async deleteEvent(id: string) {
+    return await request.delete(`/events/${id}`);
+  }
 };
