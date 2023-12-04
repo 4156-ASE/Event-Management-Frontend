@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Avatar, Button, ButtonGroup, Table } from '@douyinfe/semi-ui';
+import { Avatar, Button, ButtonGroup, Modal, Table } from '@douyinfe/semi-ui';
 import * as dateFns from 'date-fns';
 import { APIs } from '../../utils/api';
 import { Toast } from '@douyinfe/semi-ui';
@@ -38,6 +38,7 @@ const EventList = () => {
     }
 
     updateData();
+    Toast.success('Delete event success.');
   };
 
   const columns: ColumnProps<EventDetail>[] = [
@@ -104,7 +105,17 @@ const EventList = () => {
               type="danger"
               theme="solid"
               onClick={() => {
-                handleDelete(event.id);
+                Modal.warning({
+                  title: 'Delete Event',
+                  content: (
+                    <div>
+                      Will you delete event: <span className="font-bold">{event.title}</span>
+                    </div>
+                  ),
+                  onOk: () => handleDelete(event.id),
+                  okText: 'Confirm',
+                  cancelText: 'Cancel',
+                });
               }}
             >
               Delete
