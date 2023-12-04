@@ -1,9 +1,20 @@
 import { useEffect, useState } from 'react';
 import { EventDetail, EventUpdateReq, UserDetail } from '../../utils/dto';
-import { Avatar, AvatarGroup, Button, Dropdown, Form, Toast, useFormApi } from '@douyinfe/semi-ui';
+import {
+  Avatar,
+  AvatarGroup,
+  Button,
+  Dropdown,
+  Form,
+  Input,
+  Modal,
+  Toast,
+  useFormApi,
+} from '@douyinfe/semi-ui';
 import { APIs } from '../../utils/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getName } from '../../utils/data';
+import Label from '@douyinfe/semi-ui/lib/es/form/label';
 
 interface UserAvatarProps {
   user: UserDetail;
@@ -36,16 +47,57 @@ function UserAvatar({ user, isHost }: UserAvatarProps) {
   );
 }
 
+interface AddModalProps {
+  visible: boolean;
+  onOk: (event: EventDetail) => void;
+  onCancel: () => void;
+  eventId: string;
+}
+
+function AddModal({ visible, onOk, onCancel, eventId }: AddModalProps) {
+  const [email, setEmail] = useState('');
+  async function handleSubmit() {
+    const resp = await APIs.addUser({
+      eventId,
+      email,
+    });
+
+    if (resp.status !== 201) {
+      Toast.error('Failed to add user.');
+      console.error(resp);
+      return;
+    }
+
+    onOk(resp.data);
+  }
+
+  return (
+    <Modal
+      title="Add User"
+      visible={visible}
+      okText="Add"
+      cancelText="Cancel"
+      onOk={() => {
+        handleSubmit();
+      }}
+      onCancel={onCancel}
+    >
+      <Label>Email</Label>
+      <Input value={email} onChange={(v) => setEmail(v)} />
+    </Modal>
+  );
+}
+
 function Inner({ id }: { id: string }) {
   const formAPI = useFormApi<EventDetail>();
   const [event, setEvent] = useState<EventDetail>();
+  const [addUserModalVisible, setAddUserModalVisible] = useState(false);
   const navigate = useNavigate();
-  const formState = formAPI.getFormState();
 
   const fetchEvent = async (eventId: string) => {
     const resp = await APIs.getEvent(eventId);
 
-    if (resp.status !== 200) {
+    if (resp.status !== 201) {
       Toast.error('Failed to get event.');
       console.error(resp);
       return;
@@ -59,11 +111,21 @@ function Inner({ id }: { id: string }) {
     fetchEvent(id);
   }, [id]);
 
-  console.log('formState', formState);
-
   return (
     <>
       <h1 className="font-bold text-3xl">Event Detail</h1>
+      <AddModal
+        eventId={event?.id ?? ''}
+        visible={addUserModalVisible}
+        onCancel={() => {
+          setAddUserModalVisible(false);
+        }}
+        onOk={(values: EventDetail) => {
+          setEvent(values);
+          formAPI.setValues(values);
+          setAddUserModalVisible(false);
+        }}
+      />
       <Form.Input field="title" label="Title" placeholder="Enter your title" />
       <Form.Input field="desc" label="Description" placeholder="Enter your description" />
       <Form.Input field="location" label="Location" placeholder="Enter your location" />
@@ -89,7 +151,14 @@ function Inner({ id }: { id: string }) {
               <UserAvatar user={participate} key={participate.id} isHost={false} />
             ))}
           </AvatarGroup>
-          <Button className="text-2xl">+</Button>
+          <Button
+            className="text-2xl"
+            onClick={() => {
+              setAddUserModalVisible(true);
+            }}
+          >
+            +
+          </Button>
         </div>
       </div>
       <div className="flex space-x-8 items-end">

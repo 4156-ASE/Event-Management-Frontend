@@ -1,4 +1,5 @@
 import {
+  AddUserReq,
   AuthSignInDto,
   AuthSignInResp,
   AuthSignUpDto,
@@ -40,5 +41,9 @@ export const APIs = {
   /** updateEvent */
   async updateEvent(id: string, data: EventUpdateReq) {
     return await request.put<EventDetail>(`/events/${id}`, data);
+  },
+  /** add user to an event */
+  async addUser(data: AddUserReq) {
+    return await request.post<EventDetail>('/events/add_user', data);
   },
 };
