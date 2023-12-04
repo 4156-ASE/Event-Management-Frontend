@@ -65,7 +65,7 @@ const EventList = () => {
         return (
           <div>
             <Avatar size="small" color={'orange'} style={{ marginRight: 4 }}>
-              {typeof name === 'string' && name.slice(0, 1)}
+              {host.lastname.slice(0, 2).toUpperCase()}
             </Avatar>
             {name}
           </div>
@@ -98,11 +98,11 @@ const EventList = () => {
         return (
           <ButtonGroup type={'primary'}>
             <Link to={`/event/details/${event.id}`}>
-              <Button theme='light'>Detail</Button>
+              <Button theme="light">Detail</Button>
             </Link>
             <Button
               type="danger"
-              theme='solid'
+              theme="solid"
               onClick={() => {
                 handleDelete(event.id);
               }}
