@@ -19,9 +19,11 @@ import Label from '@douyinfe/semi-ui/lib/es/form/label';
 interface UserAvatarProps {
   user: UserDetail;
   isHost: boolean;
+  eventId: string;
+  onRemoveUser: (event: EventDetail) => void;
 }
 
-function UserAvatar({ user, isHost }: UserAvatarProps) {
+function UserAvatar({ user, isHost, eventId, onRemoveUser }: UserAvatarProps) {
   return (
     <Dropdown
       key={user.id}
@@ -32,7 +34,34 @@ function UserAvatar({ user, isHost }: UserAvatarProps) {
           {!isHost && (
             <>
               <Dropdown.Item>Transfer Host</Dropdown.Item>
-              <Button type="danger" theme="solid" className="w-full h-full">
+              <Button
+                type="danger"
+                theme="solid"
+                className="w-full h-full"
+                onClick={() => {
+                  Modal.warning({
+                    title: 'Remove user',
+                    content: (
+                      <div>
+                        Will you remove user: <span className="font-bold">{getName(user)}</span>
+                      </div>
+                    ),
+                    okText: 'Remove',
+                    cancelText: 'Cancel',
+                    onOk: async () => {
+                      const resp = await APIs.removeUser({ eventId, userId: user.id });
+                      // TODO;
+                      if (resp.status !== 201) {
+                        Toast.error('Failed to remove user');
+                        console.error(resp);
+                        return;
+                      }
+
+                      onRemoveUser(resp.data);
+                    },
+                  });
+                }}
+              >
                 Remove
               </Button>
             </>
@@ -97,7 +126,7 @@ function Inner({ id }: { id: string }) {
   const fetchEvent = async (eventId: string) => {
     const resp = await APIs.getEvent(eventId);
 
-    if (resp.status !== 201) {
+    if (resp.status !== 200) {
       Toast.error('Failed to get event.');
       console.error(resp);
       return;
@@ -110,6 +139,12 @@ function Inner({ id }: { id: string }) {
   useEffect(() => {
     fetchEvent(id);
   }, [id]);
+
+  function handleRemoveUser(ev: EventDetail) {
+    setEvent(ev);
+    formAPI.setValues(ev);
+    Toast.success('Remove user success.');
+  }
 
   return (
     <>
@@ -143,12 +178,25 @@ function Inner({ id }: { id: string }) {
       />
       <div className="flex flex-col mb-4">
         <Form.Label>Host</Form.Label>
-        {event && <UserAvatar user={event?.host} isHost={true} />}
+        {event && (
+          <UserAvatar
+            user={event?.host}
+            isHost={true}
+            eventId={event.id}
+            onRemoveUser={handleRemoveUser}
+          />
+        )}
         <Form.Label>Participants</Form.Label>
         <div className="flex items-center space-x-4">
           <AvatarGroup>
             {event?.participants?.map((participate) => (
-              <UserAvatar user={participate} key={participate.id} isHost={false} />
+              <UserAvatar
+                user={participate}
+                key={participate.id}
+                isHost={false}
+                eventId={event.id}
+                onRemoveUser={handleRemoveUser}
+              />
             ))}
           </AvatarGroup>
           <Button

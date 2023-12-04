@@ -88,3 +88,9 @@ export interface AddUserReq {
 
   eventId: string;
 }
+
+export interface RemoveUserReq {
+  userId: string;
+
+  eventId: string;
+}
