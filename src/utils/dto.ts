@@ -82,3 +82,9 @@ export interface EventUpdateReq {
 
   location?: string;
 }
+
+export interface AddUserReq {
+  email: string;
+
+  eventId: string;
+}
