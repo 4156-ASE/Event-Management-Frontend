@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Navbar from './components/layout/Navbar';
 import CreateEventForm from './components/event/CreateEventForm';
@@ -7,13 +7,35 @@ import Profile from './components/profile/Profile';
 import SignUp from './components/user/SignUp';
 import Landing from './components/layout/Landing';
 import SingleEvent from './components/event/SingleEvent';
-import AuthContextProvider from './components/auth/AuthContextProvider';
+import AuthContextProvider, { AuthContext } from './components/auth/AuthContextProvider';
 import Signin from './components/user/SignIn';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import axios from 'axios';
 import en_US from '@douyinfe/semi-ui/lib/es/locale/source/en_US';
 import { LocaleProvider } from '@douyinfe/semi-ui';
 import { EventDetailPage } from './components/event/EventDetailPage';
+
+function InnerRoutes() {
+  const { auth } = useContext(AuthContext);
+
+  return auth ? (
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/create" element={<CreateEventForm />} />
+      <Route path="/events" element={<Events />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/event/:id" element={<SingleEvent />} />
+      <Route path="/event/details/:id" element={<EventDetailPage />} />
+      <Route path="*" element={<Navigate to="/events" replace />} />
+    </Routes>
+  ) : (
+    <Routes>
+      <Route path="/signin" element={<Signin />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="*" element={<Navigate to="/signin" replace />} />
+    </Routes>
+  );
+}
 
 const App = () => {
   async function check() {
@@ -47,16 +69,8 @@ const App = () => {
       <AuthContextProvider>
         <BrowserRouter>
           <Navbar />
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/create" element={<CreateEventForm />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/event/:id" element={<SingleEvent />} />
-            <Route path="/event/details/:id" element={<EventDetailPage />} />
-            <Route path="/signin" element={<Signin />} />
-            <Route path="/signup" element={<SignUp />} />
-          </Routes>
+
+          <InnerRoutes />
         </BrowserRouter>
       </AuthContextProvider>
     </LocaleProvider>
