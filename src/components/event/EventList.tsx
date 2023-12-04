@@ -1,36 +1,95 @@
-import { Table, TableHead, TableBody, TableRow, TableCell, IconButton } from '@mui/material';
-import { AiOutlineDelete } from 'react-icons/ai';
-import { FaRegEdit } from 'react-icons/fa';
-import { TbListDetails } from 'react-icons/tb';
-
-import { useContext } from 'react';
-import { EventsContext } from './EventsContextProvider';
+import { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Avatar, Button, ButtonGroup, Table } from '@douyinfe/semi-ui';
+import * as dateFns from 'date-fns';
+import { APIs } from '../../utils/api';
+import { Toast } from '@douyinfe/semi-ui';
+import { EventDetail } from '../../utils/dto';
+import { ColumnProps } from '@douyinfe/semi-ui/lib/es/table/interface';
+import { getName } from '../../utils/data';
+
+const columns: ColumnProps<EventDetail>[] = [
+  {
+    title: 'Title',
+    dataIndex: 'title',
+    width: 300,
+    sorter: (a, b) => a!.title.localeCompare(b!.title),
+    render: (text: string) => {
+      return <div>{text}</div>;
+    },
+  },
+  {
+    title: 'Location',
+    dataIndex: 'location',
+    sorter: (a, b) => a!.location.localeCompare(b!.location),
+    render: (text: string) => text,
+  },
+  {
+    title: 'Host',
+    dataIndex: 'host',
+    sorter: (a, b) => getName(a!.host).localeCompare(getName(b!.host)),
+    render: (host: EventDetail['host']) => {
+      const name = getName(host);
+      return (
+        <div>
+          <Avatar size="small" color={'orange'} style={{ marginRight: 4 }}>
+            {typeof name === 'string' && name.slice(0, 1)}
+          </Avatar>
+          {name}
+        </div>
+      );
+    },
+  },
+  {
+    title: 'Start Time',
+    dataIndex: 'start_time',
+    sorter: (a, b) => a!.start_time.localeCompare(b!.start_time),
+    render: (value) => {
+      return dateFns.format(new Date(value), 'dd/MM/yyyy-hh:mm:ss');
+    },
+  },
+  {
+    title: 'End Time',
+    dataIndex: 'end_time',
+    sorter: (a, b) => a!.end_time.localeCompare(b!.end_time),
+    render: (value) => {
+      return dateFns.format(new Date(value), 'dd/MM/yyyy-hh:mm:ss');
+    },
+  },
+  {
+    title: 'Operations',
+    fixed: 'right',
+    width: 220,
+    align: 'center',
+    dataIndex: 'operate',
+    render: () => (
+      <ButtonGroup type={'primary'}>
+        <Button>Detail</Button>
+        <Button>Edit</Button>
+        <Button type="danger">Delete</Button>
+      </ButtonGroup>
+    ),
+  },
+];
 
 const EventList = () => {
-  const { eventList, deleteEvent } = useContext(EventsContext);
-  console.log(eventList);
-  const fakeEventList = [
-    {
-      id: 34,
-      title: '111',
-      desc: 'test',
-      start_time: '2023-10-28T14:30:00.000Z',
-      end_time: '2023-10-28T14:30:00.000Z',
-      location: '111',
-      host: 1,
-    },
-    {
-      id: 35,
-      title: 'Halloween Party5',
-      desc: 'Get ready for a spooktacular Halloween Party on October 28, 2023 - a night filled with fright, fun, and fabulous costumes!',
-      start_time: '2023-10-28T14:30:00.000Z',
-      end_time: '2023-10-29T23:30:00.000Z',
-      location: '116 St, New York, NY 10025',
-      host: 1,
-    },
-  ];
+  const [dataSource, setData] = useState<EventDetail[]>([]);
+  const scroll = useMemo(() => ({ y: 300 }), []);
+
+  useEffect(() => {
+    (async () => {
+      const resp = await APIs.getEvents();
+
+      if (resp.status !== 200) {
+        Toast.error('Failed to get data');
+        console.error(resp);
+        return;
+      }
+
+      setData(resp.data);
+    })();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -48,69 +107,14 @@ const EventList = () => {
   };
 
   return (
-    <div className="content flex-center flex-dir-col">
-      <div className="flex-center">
-        <h1 className="large text-primary">Manage My Events</h1>
-      </div>
-      <Table style={{ width: '80%' }}>
-        <TableHead>
-          <TableRow>
-            <TableCell width="5%">ID</TableCell>
-            <TableCell width="20%">Title</TableCell>
-            <TableCell width="20%">Start Time</TableCell>
-            <TableCell width="20%">End Time</TableCell>
-            <TableCell width="20%">Host</TableCell>
-            <TableCell width="5%">Details</TableCell>
-            <TableCell width="5%">Edit</TableCell>
-            <TableCell width="5%">Delete</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {fakeEventList
-            ? fakeEventList.map((event) => (
-                <TableRow key={event.id}>
-                  <TableCell width="5%">{event.id}</TableCell>
-                  <TableCell
-                    width="20%"
-                    key={event.id}
-                    onClick={() => navigate(`/event/details/${event.id}`)}
-                  >
-                    {event.title}
-                  </TableCell>
-                  <TableCell width="20%">{event.start_time}</TableCell>
-                  <TableCell width="20%">{event.end_time}</TableCell>
-                  <TableCell width="20%">{event.host}</TableCell>
-
-                  <TableCell width="5%">
-                    <Link to={`/event/details/${event.id}`} key={event.id}>
-                      <IconButton>
-                        <TbListDetails />
-                      </IconButton>
-                    </Link>
-                  </TableCell>
-                  <TableCell width="5%">
-                    <Link to={`/event/${event.id}`} key={event.id}>
-                      <IconButton>
-                        <FaRegEdit />
-                      </IconButton>
-                    </Link>
-                  </TableCell>
-                  <TableCell width="5%">
-                    <IconButton
-                      onClick={() => {
-                        deleteEvent(event.id);
-                        handleDelete(event.id);
-                      }}
-                    >
-                      <AiOutlineDelete />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))
-            : null}
-        </TableBody>
-      </Table>
-    </div>
+    <Table<EventDetail>
+      bordered
+      rowKey="id"
+      empty="empty"
+      columns={columns}
+      dataSource={dataSource}
+      scroll={scroll}
+    />
   );
 };
 export default EventList;
