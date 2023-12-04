@@ -17,28 +17,27 @@ const App = () => {
   async function check() {
     try {
       const resp = await axios.get('/users/me/' + localStorage.getItem('userID'), {
-                    headers: { 'Content-Type': 'application/json' },
-                    withCredentials: true
-                });
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      });
       if (resp.data.user.id == localStorage.getItem('userID')) {
-        console.log(resp.data)
-      }else {
-        localStorage.removeItem('userID')
-        localStorage.removeItem('token')
+        console.log(resp.data);
+      } else {
+        localStorage.removeItem('userID');
+        localStorage.removeItem('token');
       }
     } catch (error) {
-      localStorage.removeItem('userID')
-      localStorage.removeItem('token')
+      localStorage.removeItem('userID');
+      localStorage.removeItem('token');
     }
   }
-  
+
   // Write this line
-  
+
   useEffect(() => {
-    check()
-   }, []);
-  
-  
+    check();
+  }, []);
+
   setInterval(check, 3000000);
 
   return (
