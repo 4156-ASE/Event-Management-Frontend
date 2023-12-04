@@ -70,3 +70,15 @@ export interface EventCreateReq {
 
   location: string;
 }
+
+export interface EventUpdateReq {
+  title?: string;
+
+  desc?: string;
+
+  start_time?: string;
+
+  end_time?: string;
+
+  location?: string;
+}

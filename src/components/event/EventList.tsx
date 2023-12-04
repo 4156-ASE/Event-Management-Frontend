@@ -91,20 +91,18 @@ const EventList = () => {
     {
       title: 'Operations',
       fixed: 'right',
-      width: 220,
+      width: 170,
       align: 'center',
       dataIndex: 'operate',
       render: (_, event: EventDetail) => {
         return (
           <ButtonGroup type={'primary'}>
             <Link to={`/event/details/${event.id}`}>
-              <Button>Detail</Button>
-            </Link>
-            <Link to={`/event/${event.id}`}>
-              <Button>Edit</Button>
+              <Button theme='light'>Detail</Button>
             </Link>
             <Button
               type="danger"
+              theme='solid'
               onClick={() => {
                 handleDelete(event.id);
               }}

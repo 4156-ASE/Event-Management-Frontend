@@ -1,4 +1,11 @@
-import { AuthSignInDto, AuthSignInResp, AuthSignUpDto, EventCreateReq, EventDetail } from './dto';
+import {
+  AuthSignInDto,
+  AuthSignInResp,
+  AuthSignUpDto,
+  EventCreateReq,
+  EventDetail,
+  EventUpdateReq,
+} from './dto';
 import { request } from './request';
 
 export const APIs = {
@@ -18,6 +25,10 @@ export const APIs = {
   async getEvents() {
     return await request.get<EventDetail[]>('/events');
   },
+  /** get an event */
+  async getEvent(id: string) {
+    return await request.get<EventDetail>(`/events/${id}`);
+  },
   /** create an event */
   async createEvent(data: EventCreateReq) {
     return await request.post<EventDetail>('/events', data);
@@ -25,5 +36,9 @@ export const APIs = {
   /** delete an event */
   async deleteEvent(id: string) {
     return await request.delete(`/events/${id}`);
-  }
+  },
+  /** updateEvent */
+  async updateEvent(id: string, data: EventUpdateReq) {
+    return await request.put<EventDetail>(`/events/${id}`, data);
+  },
 };
