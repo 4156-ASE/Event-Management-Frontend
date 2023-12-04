@@ -17,13 +17,14 @@ import { getName } from '../../utils/data';
 import Label from '@douyinfe/semi-ui/lib/es/form/label';
 
 interface UserAvatarProps {
-  user: UserDetail;
+  /** is host avatar */
   isHost: boolean;
   eventId: string;
-  onRemoveUser: (event: EventDetail) => void;
+  user: UserDetail;
+  onChangeParticipants: (event: EventDetail) => void;
 }
 
-function UserAvatar({ user, isHost, eventId, onRemoveUser }: UserAvatarProps) {
+function UserAvatar({ isHost, eventId, user, onChangeParticipants }: UserAvatarProps) {
   return (
     <Dropdown
       key={user.id}
@@ -33,7 +34,35 @@ function UserAvatar({ user, isHost, eventId, onRemoveUser }: UserAvatarProps) {
           <Dropdown.Item>Detail</Dropdown.Item>
           {!isHost && (
             <>
-              <Dropdown.Item>Transfer Host</Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => {
+                  Modal.warning({
+                    title: 'Transfer host to participant',
+                    content: (
+                      <div>
+                        Will you transfer your host to user:{' '}
+                        <span className="font-bold">{getName(user)}</span>
+                      </div>
+                    ),
+                    okText: 'Confirm',
+                    cancelText: 'Cancel',
+                    onOk: async () => {
+                      const resp = await APIs.changeHost({ eventId, userId: user.id });
+
+                      if (resp.status !== 201) {
+                        Toast.error('Failed to transfer host.');
+                        console.error(resp);
+                        return;
+                      }
+
+                      onChangeParticipants(resp.data);
+                      Toast.success('Transfer host success.');
+                    },
+                  });
+                }}
+              >
+                Transfer Host
+              </Dropdown.Item>
               <Button
                 type="danger"
                 theme="solid"
@@ -50,14 +79,15 @@ function UserAvatar({ user, isHost, eventId, onRemoveUser }: UserAvatarProps) {
                     cancelText: 'Cancel',
                     onOk: async () => {
                       const resp = await APIs.removeUser({ eventId, userId: user.id });
-                      // TODO;
+
                       if (resp.status !== 201) {
                         Toast.error('Failed to remove user');
                         console.error(resp);
                         return;
                       }
 
-                      onRemoveUser(resp.data);
+                      onChangeParticipants(resp.data);
+                      Toast.success('remove user success.');
                     },
                   });
                 }}
@@ -140,10 +170,9 @@ function Inner({ id }: { id: string }) {
     fetchEvent(id);
   }, [id]);
 
-  function handleRemoveUser(ev: EventDetail) {
+  function handleChangeParticipants(ev: EventDetail) {
     setEvent(ev);
     formAPI.setValues(ev);
-    Toast.success('Remove user success.');
   }
 
   return (
@@ -180,22 +209,22 @@ function Inner({ id }: { id: string }) {
         <Form.Label>Host</Form.Label>
         {event && (
           <UserAvatar
-            user={event?.host}
-            isHost={true}
             eventId={event.id}
-            onRemoveUser={handleRemoveUser}
+            user={event.host}
+            isHost={true}
+            onChangeParticipants={handleChangeParticipants}
           />
         )}
         <Form.Label>Participants</Form.Label>
         <div className="flex items-center space-x-4">
           <AvatarGroup>
-            {event?.participants?.map((participate) => (
+            {event?.participants?.map((participant) => (
               <UserAvatar
-                user={participate}
-                key={participate.id}
-                isHost={false}
                 eventId={event.id}
-                onRemoveUser={handleRemoveUser}
+                user={participant}
+                key={participant.id}
+                isHost={false}
+                onChangeParticipants={handleChangeParticipants}
               />
             ))}
           </AvatarGroup>

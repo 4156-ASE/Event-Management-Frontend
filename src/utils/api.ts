@@ -3,6 +3,7 @@ import {
   AuthSignInDto,
   AuthSignInResp,
   AuthSignUpDto,
+  ChangeHostReq,
   EventCreateReq,
   EventDetail,
   EventUpdateReq,
@@ -50,5 +51,9 @@ export const APIs = {
   /** remove user from an event */
   async removeUser(data: RemoveUserReq) {
     return await request.post<EventDetail>('/events/remove_user', data);
+  },
+  /** change event's host */
+  async changeHost(data: ChangeHostReq) {
+    return await request.post<EventDetail>('/events/change_host', data);
   },
 };
