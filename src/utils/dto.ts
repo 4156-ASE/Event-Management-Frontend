@@ -94,3 +94,9 @@ export interface RemoveUserReq {
 
   eventId: string;
 }
+
+export interface ChangeHostReq {
+  userId: string;
+
+  eventId: string;
+}
