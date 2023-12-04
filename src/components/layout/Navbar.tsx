@@ -1,29 +1,24 @@
-import { Link } from 'react-router-dom';
-import { CgEventbrite } from 'react-icons/cg';
-import { FiCheckSquare, FiLogIn } from 'react-icons/fi';
-import {
-  IoTodayOutline,
-  IoAddCircleOutline,
-  IoPersonCircleOutline,
-  IoLogOut,
-} from 'react-icons/io5';
-import { Fragment, useContext, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useContext } from 'react';
 import { AuthContext } from '../auth/AuthContextProvider';
-import axios from 'axios';
+import { Nav, Dropdown, Button } from '@douyinfe/semi-ui';
+
+import { IconIntro, IconDescriptions, IconCalendar } from '@douyinfe/semi-icons-lab';
+import { APIs } from '../../utils/api';
 
 const Navbar = () => {
   const { auth, setAuth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
-      const resp = await axios.get('/auth/signout', {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      });
-      if (resp.data.status === 'success') {
+      const resp = await APIs.signout();
+      if (resp.status === 200) {
         localStorage.removeItem('token');
         localStorage.removeItem('userID');
         setAuth(localStorage.getItem('token'));
+        navigate('/signin');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -31,119 +26,61 @@ const Navbar = () => {
     }
   };
 
-  const unauthLinks = (
-    <ul>
-      <li>
-        <Link to="/signin">
-          <div className="center">
-            <FiLogIn size={30} />
-            <div className="center p-title">
-              <span>Sign In</span>
-            </div>
-          </div>
-        </Link>
-        <Link to="/signup">
-          <div className="center">
-            <FiCheckSquare size={30} />
-            <div className="center p-title">
-              <span>Register</span>
-            </div>
-          </div>
-        </Link>
-      </li>
-    </ul>
+  const footer = auth ? (
+    <Dropdown
+      position="bottomRight"
+      render={
+        <Dropdown.Menu className="w-36">
+          <Dropdown.Item
+            onClick={() => {
+              navigate('/signup');
+            }}
+          >
+            SignUp
+          </Dropdown.Item>
+          <Dropdown.Item onClick={handleSignOut}>Logout</Dropdown.Item>
+        </Dropdown.Menu>
+      }
+    >
+      <Button>User</Button>
+    </Dropdown>
+  ) : (
+    <Dropdown
+      position="bottomRight"
+      render={
+        <Dropdown.Menu className="w-36">
+          <Link to={'/signup'}>
+            <Dropdown.Item>SignUp</Dropdown.Item>
+          </Link>
+          <Link to={'/signin'}>
+            <Dropdown.Item>SignIn</Dropdown.Item>
+          </Link>
+        </Dropdown.Menu>
+      }
+    >
+      <Button>SignUp/SignIn</Button>
+    </Dropdown>
   );
 
-  const authLinks = (
-    <ul>
-      <li>
-        <Link to="/create">
-          <div className="center">
-            <IoAddCircleOutline size={30} />
-            <div className="center p-title">
-              <span>Create an Reservation</span>
-            </div>
-          </div>
-        </Link>
-      </li>
-      <li>
-        <Link to="/myevents">
-          <div className="center">
-            <IoTodayOutline size={30} />
-            <div className="center p-title">
-              <span>Manage My Reservations</span>
-            </div>
-          </div>
-        </Link>
-      </li>
-      <li>
-        <Link to="/mytickets">
-          <div className="center">
-            <IoPersonCircleOutline size={30} />
-            <div className="center p-title">
-              <span>My Tickets</span>
-            </div>
-          </div>
-        </Link>
-      </li>
-      <li>
-        <Link to="/profile">
-          <div className="center">
-            <IoPersonCircleOutline size={30} />
-            <div className="center p-title">
-              <span>Profile</span>
-            </div>
-          </div>
-        </Link>
-      </li>
-      <li>
-        <Link to="/">
-          <div className="center" onClick={handleSignOut}>
-            <IoLogOut size={30} />
-            <div className="center p-title">
-              <span>Logout</span>
-            </div>
-          </div>
-        </Link>
-      </li>
-    </ul>
-  );
-  const adminLinks = (
-    <ul>
-      <li>
-        <Link to="/profile">
-          <div className="center">
-            <IoPersonCircleOutline size={30} />
-            <div className="center p-title">
-              <span>Profile</span>
-            </div>
-          </div>
-        </Link>
-      </li>
-      <li>
-        <Link to="/">
-          <div className="center" onClick={handleSignOut}>
-            <IoLogOut size={30} />
-            <div className="center p-title">
-              <span>Logout</span>
-            </div>
-          </div>
-        </Link>
-      </li>
-    </ul>
-  );
   return (
-    <div className="flex h-40 w-full justify-between px-8 items-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-      <Link to="/">
-        <span className="main-title font-bold text-2xl">Restaurant Reservation Organizer</span>
-      </Link>
-      <div>
-        {auth && localStorage.getItem('role') === 'admin'
-          ? adminLinks
-          : auth && localStorage.getItem('role') === 'regular'
-          ? authLinks
-          : unauthLinks}
-      </div>
+    <div style={{ width: '100%' }}>
+      <Nav
+        mode={'horizontal'}
+        items={
+          auth
+            ? [
+                { itemKey: 'home', text: 'Home', icon: <IconIntro /> },
+                { itemKey: 'events', text: 'Events', icon: <IconCalendar /> },
+                { itemKey: 'profile', text: 'Profile', icon: <IconDescriptions /> },
+              ]
+            : []
+        }
+        onSelect={(key) => console.log(key)}
+        header={{
+          text: 'EMS',
+        }}
+        footer={footer}
+      />
     </div>
   );
 };

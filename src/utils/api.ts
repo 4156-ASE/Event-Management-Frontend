@@ -10,4 +10,8 @@ export const APIs = {
     async signin(data: AuthSignInDto) {
         return await request.post<AuthSignInResp>('/auth/signin', data);
     },
+    /** signout */
+    async signout() {
+        return await request.get('/auth/signout');
+    },
 }
