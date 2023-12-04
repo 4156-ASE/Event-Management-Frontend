@@ -8,12 +8,12 @@ import SignUp from './components/user/SignUp';
 import Landing from './components/layout/Landing';
 import SingleEvent from './components/event/SingleEvent';
 import AuthContextProvider from './components/auth/AuthContextProvider';
-import SingleEventDetails from './components/event/SingleEventDetails';
 import Signin from './components/user/SignIn';
 import { useEffect } from 'react';
 import axios from 'axios';
 import en_US from '@douyinfe/semi-ui/lib/es/locale/source/en_US';
 import { LocaleProvider } from '@douyinfe/semi-ui';
+import { EventDetailPage } from './components/event/EventDetailPage';
 
 const App = () => {
   async function check() {
@@ -53,7 +53,7 @@ const App = () => {
             <Route path="/events" element={<Events />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/event/:id" element={<SingleEvent />} />
-            <Route path="/event/details/:id" element={<SingleEventDetails />} />
+            <Route path="/event/details/:id" element={<EventDetailPage />} />
             <Route path="/signin" element={<Signin />} />
             <Route path="/signup" element={<SignUp />} />
           </Routes>
