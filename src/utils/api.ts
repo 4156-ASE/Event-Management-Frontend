@@ -6,6 +6,7 @@ import {
   EventCreateReq,
   EventDetail,
   EventUpdateReq,
+  RemoveUserReq,
 } from './dto';
 import { request } from './request';
 
@@ -45,5 +46,9 @@ export const APIs = {
   /** add user to an event */
   async addUser(data: AddUserReq) {
     return await request.post<EventDetail>('/events/add_user', data);
+  },
+  /** remove user from an event */
+  async removeUser(data: RemoveUserReq) {
+    return await request.post<EventDetail>('/events/remove_user', data);
   },
 };
