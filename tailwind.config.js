@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  important: true,
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   presets: [],
   plugins: [require('@tailwindcss/typography'), require('tailwindcss-children')],

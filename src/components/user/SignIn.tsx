@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../auth/AuthContextProvider';
-import { Button, Form, Tooltip } from '@douyinfe/semi-ui';
+import { Button, Form, Toast, Tooltip } from '@douyinfe/semi-ui';
 import { IconHelpCircle } from '@douyinfe/semi-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { APIs } from '../../utils/api';
@@ -29,7 +29,9 @@ const SignIn: React.FC = () => {
       console.log(resp);
 
       if (resp.status !== 201) {
-        // TODO: error
+        Toast.error('Failed to sign in');
+        console.error(resp);
+        return;
       }
 
       localStorage.setItem('userID', resp.data.userID);
@@ -37,7 +39,7 @@ const SignIn: React.FC = () => {
       localStorage.setItem('role', resp.data.user.role);
       setAuth(resp.data.token);
 
-      navigate('/');
+      navigate('/events');
     })();
   };
 

@@ -12,6 +12,8 @@ import SingleEventDetails from './components/event/SingleEventDetails';
 import Signin from './components/user/SignIn';
 import { useEffect } from 'react';
 import axios from 'axios';
+import en_US from '@douyinfe/semi-ui/lib/es/locale/source/en_US';
+import { LocaleProvider } from '@douyinfe/semi-ui';
 
 const App = () => {
   async function check() {
@@ -41,21 +43,23 @@ const App = () => {
   setInterval(check, 3000000);
 
   return (
-    <AuthContextProvider>
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/create" element={<CreateEventForm />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/event/:id" element={<SingleEvent />} />
-          <Route path="/event/details/:id" element={<SingleEventDetails />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/signup" element={<SignUp />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthContextProvider>
+    <LocaleProvider locale={en_US}>
+      <AuthContextProvider>
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/create" element={<CreateEventForm />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/event/:id" element={<SingleEvent />} />
+            <Route path="/event/details/:id" element={<SingleEventDetails />} />
+            <Route path="/signin" element={<Signin />} />
+            <Route path="/signup" element={<SignUp />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthContextProvider>
+    </LocaleProvider>
   );
 };
 

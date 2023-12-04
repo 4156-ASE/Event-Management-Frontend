@@ -1,4 +1,4 @@
-import { AuthSignInDto, AuthSignInResp, AuthSignUpDto, EventDetail } from './dto';
+import { AuthSignInDto, AuthSignInResp, AuthSignUpDto, EventCreateReq, EventDetail } from './dto';
 import { request } from './request';
 
 export const APIs = {
@@ -17,5 +17,9 @@ export const APIs = {
   /** get events */
   async getEvents() {
     return await request.get<EventDetail[]>('/events');
+  },
+  /** create an event */
+  async createEvent(data: EventCreateReq) {
+    return await request.post<EventDetail>('/events', data);
   },
 };
