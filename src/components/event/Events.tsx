@@ -4,8 +4,8 @@ import EventList from './EventList';
 const Events = () => {
   return (
     <EventsContextProvider>
-      <div className='px-8 py-12'>
-      <EventList />
+      <div className="px-8 py-12">
+        <EventList />
       </div>
     </EventsContextProvider>
   );

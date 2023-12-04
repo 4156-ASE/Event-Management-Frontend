@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Avatar, Button, ButtonGroup, Table } from '@douyinfe/semi-ui';
 import * as dateFns from 'date-fns';
@@ -13,31 +12,32 @@ const EventList = () => {
   const [dataSource, setData] = useState<EventDetail[]>([]);
   const scroll = useMemo(() => ({ y: 300 }), []);
 
+  const updateData = async () => {
+    const resp = await APIs.getEvents();
+
+    if (resp.status !== 200) {
+      Toast.error('Failed to get data');
+      console.error(resp);
+      return;
+    }
+
+    setData(resp.data);
+  };
+
   useEffect(() => {
-    (async () => {
-      const resp = await APIs.getEvents();
-
-      if (resp.status !== 200) {
-        Toast.error('Failed to get data');
-        console.error(resp);
-        return;
-      }
-
-      setData(resp.data);
-    })();
+    updateData();
   }, []);
 
-  const handleDelete = async (eventId: number | null) => {
-    console.log('delete:', eventId);
-    axios
-      .delete(`/events/${eventId}`)
-      .then((res) => {
-        const data = res.data;
-        alert(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const handleDelete = async (eventId: string) => {
+    const resp = await APIs.deleteEvent(eventId);
+
+    if (resp.status !== 200) {
+      Toast.error('Failed to delete.');
+      console.error(resp);
+      return;
+    }
+
+    updateData();
   };
 
   const columns: ColumnProps<EventDetail>[] = [
@@ -103,7 +103,14 @@ const EventList = () => {
             <Link to={`/event/${event.id}`}>
               <Button>Edit</Button>
             </Link>
-            <Button type="danger">Delete</Button>
+            <Button
+              type="danger"
+              onClick={() => {
+                handleDelete(event.id);
+              }}
+            >
+              Delete
+            </Button>
           </ButtonGroup>
         );
       },
