@@ -31,7 +31,37 @@ function UserAvatar({ isHost, eventId, user, onChangeParticipants }: UserAvatarP
       render={
         <Dropdown.Menu>
           <Dropdown.Title>{getName(user)}</Dropdown.Title>
-          <Dropdown.Item>Detail</Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              Modal.info({
+                hasCancel: false,
+                okText: 'Ok',
+                title: isHost ? 'Host Detail' : 'Participant Detail',
+                content: (
+                  <>
+                    <div>
+                      <Label>ID</Label>
+                      <span>{user.id}</span>
+                    </div>
+                    <div>
+                      <Label>Email</Label>
+                      <span>{user.email}</span>
+                    </div>
+                    <div>
+                      <Label>Lastname</Label>
+                      <span>{user.lastname}</span>
+                    </div>
+                    <div>
+                      <Label>Firstname</Label>
+                      <span>{user.firstname}</span>
+                    </div>
+                  </>
+                ),
+              });
+            }}
+          >
+            Detail
+          </Dropdown.Item>
           {!isHost && (
             <>
               <Dropdown.Item
