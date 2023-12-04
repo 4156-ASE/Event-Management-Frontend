@@ -1,9 +1,8 @@
-import React, { FormEventHandler, useContext, useState } from 'react';
-import { Grid } from '@mui/material';
-import { AuthContext } from '../auth/AuthContextProvider';
+import React from 'react';
 import { Button, Form, Tooltip } from '@douyinfe/semi-ui';
 import { IconHelpCircle } from '@douyinfe/semi-icons';
-import { navigateUrl, request } from '../../utils/request';
+import { Link, useNavigate } from 'react-router-dom';
+import { APIs } from '../../utils/api';
 
 type FormData = {
   email: string;
@@ -13,17 +12,15 @@ type FormData = {
 };
 
 const SignUp: React.FC = () => {
-  const { auth } = useContext(AuthContext);
-  const [agree, setAgree] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (values: FormData) => {
     (async () => {
-      const resp = await request.post('/auth/signup', values);
-      console.log(resp);
+      const resp = await APIs.signup(values);
 
       // register success
       if (resp.status === 201) {
-        navigateUrl(`${window.location.origin}/`);
+        navigate('/');
       }
     })();
   };
@@ -36,6 +33,7 @@ const SignUp: React.FC = () => {
         autoScrollToError
         onSubmit={handleSubmit}
       >
+        <h1 className="font-bold text-3xl">Sign Up</h1>
         <Form.Input field="email" label="Email" placeholder="Enter your email" />
         <Form.Input
           field="password"
@@ -54,26 +52,22 @@ const SignUp: React.FC = () => {
         />
         <Form.Input field="firstname" label="Firstname" placeholder="Enter your firstname" />
         <Form.Input field="lastname" label="Lastname" placeholder="Enter your lastname" />
-        <Button htmlType="submit" type="primary">
-          Sign Up
-        </Button>
-        {/* <Form.Checkbox field="agree" noLabel>
-          I have read and agree to the terms of service
-        </Form.Checkbox>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <p>
             <span>Or</span>
-            <Button
-              theme="borderless"
-              style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}
-            >
-              Sign up
-            </Button>
+            <Link to={'/signin'}>
+              <Button
+                theme="borderless"
+                style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}
+              >
+                Log in
+              </Button>
+            </Link>
           </p>
-          <Button disabled={!agree} htmlType="submit" type="tertiary">
-            Log in
+          <Button htmlType="submit" type="tertiary">
+            Sign up
           </Button>
-        </div> */}
+        </div>
       </Form>
     </div>
   );

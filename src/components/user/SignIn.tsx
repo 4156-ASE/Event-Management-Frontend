@@ -1,131 +1,93 @@
 import React, { useContext, useState } from 'react';
-import axios from 'axios';
-import { Grid } from '@mui/material';
 import { AuthContext } from '../auth/AuthContextProvider';
-import { Navigate } from 'react-router-dom';
-import { Form, Tooltip } from '@douyinfe/semi-ui';
+import { Button, Form, Tooltip } from '@douyinfe/semi-ui';
 import { IconHelpCircle } from '@douyinfe/semi-icons';
+import { Link, useNavigate } from 'react-router-dom';
+import { APIs } from '../../utils/api';
 
-axios.defaults.baseURL = 'http://localhost:8000';
 type FormData = {
   email: string;
   password: string;
+  lastname: string;
+  firstname: string;
 };
 
-const Signin: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
-    email: '',
-    password: '',
-  });
-
+const SignIn: React.FC = () => {
   const { auth, setAuth } = useContext(AuthContext);
+  const [agree, setAgree] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const postData = {
-      ...formData,
-    };
-    try {
-      const resp = await axios.post('/auth/signin', postData, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      });
-      if (resp.data.status === 'success') {
-        localStorage.setItem('userID', resp.data.userID);
-        localStorage.setItem('token', resp.data.token);
-        setAuth(localStorage.getItem('token'));
-      }
-      if (resp.data.user.role == 'admin') {
-        localStorage.setItem('role', 'admin');
-      } else {
-        localStorage.setItem('role', 'regular');
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('Password or Email is incorrect');
-    }
-  };
+  console.log('auth', auth);
 
   if (auth) {
-    return <Navigate replace to="/" />;
+    navigate('/');
   }
 
+  const handleSubmit = (values: FormData) => {
+    (async () => {
+      const resp = await APIs.signin(values);
+      console.log(resp);
+
+      if (resp.status !== 201) {
+        // TODO: error
+      }
+
+      localStorage.setItem('userID', resp.data.userID);
+      localStorage.setItem('token', resp.data.token);
+      localStorage.setItem('role', resp.data.user.role);
+      setAuth(resp.data.token);
+
+      navigate('/');
+    })();
+  };
+
   return (
-    <Form layout="horizontal">
-      <Form.Input field="username" label="UserName" style={{ width: 80 }} />
-      <Form.Input
-        field="password"
-        label={{
-          text: 'Password',
-          extra: (
-            <Tooltip content="More info xxx">
-              <IconHelpCircle style={{ color: 'var(--semi-color-text-2)' }} />
-            </Tooltip>
-          ),
-        }}
-        style={{ width: 176 }}
-      />
-      <Form.Select
-        field="role"
-        label={{ text: 'Role', optional: true }}
-        style={{ width: 176 }}
-        optionList={[
-          { label: 'Admin', value: 'admin' },
-          { label: 'User', value: 'user' },
-          { label: 'Guest', value: 'guest' },
-        ]}
-      ></Form.Select>
-    </Form>
+    <div className="flex justify-center">
+      <Form layout="vertical" className="mx-8 my-12 w-96" autoScrollToError onSubmit={handleSubmit}>
+        <h1 className="font-bold text-3xl">Sign In</h1>
+        <Form.Input field="email" label="Email" placeholder="Enter your email" />
+        <Form.Input
+          field="password"
+          mode="password"
+          minLength={8}
+          maxLength={20}
+          placeholder="Enter your password"
+          label={{
+            text: 'Password',
+            extra: (
+              <Tooltip content="Password has to be at between 8 and 20 chars">
+                <IconHelpCircle style={{ color: 'var(--semi-color-text-2)' }} />
+              </Tooltip>
+            ),
+          }}
+        />
+        <Form.Checkbox
+          field="agree"
+          noLabel
+          checked={agree}
+          onChange={(e) => setAgree(e.target.checked!)}
+        >
+          I have read and agree to the terms of service
+        </Form.Checkbox>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <p>
+            <span>Or</span>
+            <Link to={'/signup'}>
+              <Button
+                theme="borderless"
+                style={{ color: 'var(--semi-color-primary)', marginLeft: 10, cursor: 'pointer' }}
+              >
+                Sign up
+              </Button>
+            </Link>
+          </p>
+          <Button disabled={!agree} htmlType="submit" type="tertiary">
+            Log in
+          </Button>
+        </div>
+      </Form>
+    </div>
   );
-
-  // return (
-  //   <div className="content flex-center">
-  //     <div style={{ width: '60%' }}>
-  //       <div className="flex-center">
-  //         <h1 className="large text-primary">Create a New Reservation</h1>
-  //       </div>
-  //       <form onSubmit={handleSubmit}>
-  //         <div className="form">
-  //           <Grid container justifyContent="flex-start">
-  //             <h4>Email</h4>
-  //           </Grid>
-  //           <input
-  //             type="text"
-  //             name="email"
-  //             value={formData.email}
-  //             onChange={handleChange}
-  //             required
-  //           />
-  //         </div>
-
-  //         <div className="form">
-  //           <Grid container justifyContent="flex-start">
-  //             <h4>Password</h4>
-  //           </Grid>
-  //           <input
-  //             type="password"
-  //             name="password"
-  //             value={formData.password}
-  //             onChange={handleChange}
-  //             minLength={8}
-  //             maxLength={20}
-  //             required
-  //           />
-  //         </div>
-  //         <Grid container justifyContent="flex-start">
-  //           <button className="btn" type="submit">
-  //             Login
-  //           </button>
-  //         </Grid>
-  //       </form>
-  //     </div>
-  //   </div>
-  // );
 };
 
-export default Signin;
+export default SignIn;
