@@ -101,25 +101,27 @@ const EventList = () => {
             <Link to={`/event/details/${event.id}`}>
               <Button theme="light">Detail</Button>
             </Link>
-            <Button
-              type="danger"
-              theme="solid"
-              onClick={() => {
-                Modal.warning({
-                  title: 'Delete Event',
-                  content: (
-                    <div>
-                      Will you delete event: <span className="font-bold">{event.title}</span>
-                    </div>
-                  ),
-                  onOk: () => handleDelete(event.id),
-                  okText: 'Confirm',
-                  cancelText: 'Cancel',
-                });
-              }}
-            >
-              Delete
-            </Button>
+            {event.host.id === localStorage.getItem('userID') && (
+              <Button
+                type="danger"
+                theme="solid"
+                onClick={() => {
+                  Modal.warning({
+                    title: 'Delete Event',
+                    content: (
+                      <div>
+                        Will you delete event: <span className="font-bold">{event.title}</span>
+                      </div>
+                    ),
+                    onOk: () => handleDelete(event.id),
+                    okText: 'Confirm',
+                    cancelText: 'Cancel',
+                  });
+                }}
+              >
+                Delete
+              </Button>
+            )}
           </ButtonGroup>
         );
       },
