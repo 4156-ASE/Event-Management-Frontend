@@ -56,4 +56,8 @@ export const APIs = {
   async changeHost(eventId: string, data: ChangeHostReq) {
     return await request.patch<EventDetail>(`/events/${eventId}/change_host`, data);
   },
+  /**  */
+  async getProfile() {
+    return await request.get<EventDetail>(`/users/me`);
+  }
 };

@@ -77,16 +77,15 @@ function UserAvatar({ isHost, eventId, user, onChangeParticipants }: UserAvatarP
                     okText: 'Confirm',
                     cancelText: 'Cancel',
                     onOk: async () => {
-                      const resp = await APIs.changeHost(eventId, { userId: user.id });
+                      try {
+                        const resp = await APIs.changeHost(eventId, { userId: user.id });
 
-                      if (resp.status !== 201) {
-                        Toast.error('Failed to transfer host.');
-                        console.error(resp);
-                        return;
+                        onChangeParticipants(resp.data);
+                        Toast.success('Transfer host success.');
+                      } catch (e: any) {
+                        Toast.error('Failed to transfer host. ' + e.response.data.message);
+                        console.error(e);
                       }
-
-                      onChangeParticipants(resp.data);
-                      Toast.success('Transfer host success.');
                     },
                   });
                 }}
@@ -108,16 +107,15 @@ function UserAvatar({ isHost, eventId, user, onChangeParticipants }: UserAvatarP
                     okText: 'Remove',
                     cancelText: 'Cancel',
                     onOk: async () => {
-                      const resp = await APIs.removeUser(eventId, { userId: user.id });
+                      try {
+                        const resp = await APIs.removeUser(eventId, { userId: user.id });
 
-                      if (resp.status !== 201) {
-                        Toast.error('Failed to remove user');
-                        console.error(resp);
-                        return;
+                        onChangeParticipants(resp.data);
+                        Toast.success('remove user success.');
+                      } catch (e: any) {
+                        Toast.error('Failed to remove user. ' + e.response.data.message);
+                        console.error(e);
                       }
-
-                      onChangeParticipants(resp.data);
-                      Toast.success('remove user success.');
                     },
                   });
                 }}
@@ -146,17 +144,16 @@ interface AddModalProps {
 function AddModal({ visible, onOk, onCancel, eventId }: AddModalProps) {
   const [email, setEmail] = useState('');
   async function handleSubmit() {
-    const resp = await APIs.addUser(eventId, {
-      email,
-    });
+    try {
+      const resp = await APIs.addUser(eventId, {
+        email,
+      });
 
-    if (resp.status !== 201) {
-      Toast.error('Failed to add user.');
-      console.error(resp);
-      return;
+      onOk(resp.data);
+    } catch (e: any) {
+      Toast.error('Failed to add user. ' + e.response.data.message);
+      console.error(e);
     }
-
-    onOk(resp.data);
   }
 
   return (

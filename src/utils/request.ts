@@ -7,7 +7,7 @@ export const request = axios.create({
 
 // set every request headers with JWT Token
 request.interceptors.request.use((req) => {
-  const JWTToken = localStorage.getItem('ems:auth') || '';
+  const JWTToken = localStorage.getItem('token') || '';
   if (JWTToken) {
     req.headers.Authorization = `Bearer ${JWTToken}`;
   }

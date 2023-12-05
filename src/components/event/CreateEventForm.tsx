@@ -7,16 +7,15 @@ import { useNavigate } from 'react-router-dom';
 const CreateEventForm: React.FC = () => {
   const navigate = useNavigate();
   const handleSubmit = async (values: EventCreateReq) => {
-    const response = await APIs.createEvent(values);
+    try {
+      await APIs.createEvent(values);
 
-    if (response.status !== 201) {
-      Toast.error('Failed to create');
-      console.error(response);
-      return;
+      Toast.success('Reservation created successfully');
+      navigate('/events');
+    } catch (e: any) {
+      Toast.error('Failed to create' + e.response.data.message);
+      console.error(e);
     }
-
-    Toast.success('Reservation created successfully');
-    navigate('/events');
   };
 
   return (

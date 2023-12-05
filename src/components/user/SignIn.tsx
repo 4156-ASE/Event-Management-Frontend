@@ -25,21 +25,19 @@ const SignIn: React.FC = () => {
 
   const handleSubmit = (values: FormData) => {
     (async () => {
-      const resp = await APIs.signin(values);
-      console.log(resp);
+      try {
+        const resp = await APIs.signin(values);
 
-      if (resp.status !== 201) {
-        Toast.error('Failed to sign in');
-        console.error(resp);
-        return;
+        localStorage.setItem('userID', resp.data.userID);
+        localStorage.setItem('token', resp.data.token);
+        localStorage.setItem('role', resp.data.user.role);
+        setAuth(resp.data.token);
+
+        navigate('/events');
+      } catch (e: any) {
+        Toast.error('Failed to sign in. ' + e.response.data.message);
+        console.error(e);
       }
-
-      localStorage.setItem('userID', resp.data.userID);
-      localStorage.setItem('token', resp.data.token);
-      localStorage.setItem('role', resp.data.user.role);
-      setAuth(resp.data.token);
-
-      navigate('/events');
     })();
   };
 
