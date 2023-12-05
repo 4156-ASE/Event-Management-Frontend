@@ -10,10 +10,10 @@ import SingleEvent from './components/event/SingleEvent';
 import AuthContextProvider, { AuthContext } from './components/auth/AuthContextProvider';
 import Signin from './components/user/SignIn';
 import { useContext, useEffect } from 'react';
-import axios from 'axios';
 import en_US from '@douyinfe/semi-ui/lib/es/locale/source/en_US';
 import { LocaleProvider } from '@douyinfe/semi-ui';
 import { EventDetailPage } from './components/event/EventDetailPage';
+import { APIs } from './utils/api';
 
 function InnerRoutes() {
   const { auth } = useContext(AuthContext);
@@ -40,16 +40,7 @@ function InnerRoutes() {
 const App = () => {
   async function check() {
     try {
-      const resp = await axios.get('/users/me/' + localStorage.getItem('userID'), {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      });
-      if (resp.data.user.id == localStorage.getItem('userID')) {
-        console.log(resp.data);
-      } else {
-        localStorage.removeItem('userID');
-        localStorage.removeItem('token');
-      }
+      await APIs.getProfile();
     } catch (error) {
       localStorage.removeItem('userID');
       localStorage.removeItem('token');

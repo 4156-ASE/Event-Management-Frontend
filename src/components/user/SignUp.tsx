@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, Tooltip } from '@douyinfe/semi-ui';
+import { Button, Form, Toast, Tooltip } from '@douyinfe/semi-ui';
 import { IconHelpCircle } from '@douyinfe/semi-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { APIs } from '../../utils/api';
@@ -16,23 +16,20 @@ const SignUp: React.FC = () => {
 
   const handleSubmit = (values: FormData) => {
     (async () => {
-      const resp = await APIs.signup(values);
+      try {
+        await APIs.signup(values);
 
-      // register success
-      if (resp.status === 201) {
         navigate('/');
+      } catch (e: any) {
+        Toast.error('Failed to signup. ' + e.response.data.message);
+        console.error(e);
       }
     })();
   };
 
   return (
     <div className="flex justify-center">
-      <Form
-        layout="vertical"
-        className="mx-8 my-12 w-96"
-        autoScrollToError
-        onSubmit={handleSubmit}
-      >
+      <Form layout="vertical" className="mx-8 my-12 w-96" autoScrollToError onSubmit={handleSubmit}>
         <h1 className="font-bold text-3xl">Sign Up</h1>
         <Form.Input field="email" label="Email" placeholder="Enter your email" />
         <Form.Input
