@@ -6,17 +6,14 @@ interface AuthContext {
 }
 
 export const AuthContext = createContext<AuthContext>({
-  auth: null,
+  auth: localStorage.getItem('token'),
   setAuth: () => {
-    null;
+    //
   },
 });
 
 const AuthContextProvider = ({ children }: { children: ReactNode }) => {
-  const [auth, setAuth] = useState<string | null>(null);
-  useEffect(() => {
-    setAuth(localStorage.getItem('token'));
-  }, []);
+  const [auth, setAuth] = useState<string | null>(localStorage.getItem('token'));
   return <AuthContext.Provider value={{ auth, setAuth }}>{children}</AuthContext.Provider>;
 };
 
