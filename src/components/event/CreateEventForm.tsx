@@ -13,7 +13,7 @@ const CreateEventForm: React.FC = () => {
       Toast.success('Reservation created successfully');
       navigate('/events');
     } catch (e: any) {
-      Toast.error('Failed to create' + e.response.data.message);
+      Toast.error('Failed to create. ' + e.response.data.message);
       console.error(e);
     }
   };
