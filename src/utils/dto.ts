@@ -85,18 +85,12 @@ export interface EventUpdateReq {
 
 export interface AddUserReq {
   email: string;
-
-  eventId: string;
 }
 
 export interface RemoveUserReq {
   userId: string;
-
-  eventId: string;
 }
 
 export interface ChangeHostReq {
   userId: string;
-
-  eventId: string;
 }

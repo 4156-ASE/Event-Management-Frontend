@@ -42,18 +42,18 @@ export const APIs = {
   },
   /** updateEvent */
   async updateEvent(id: string, data: EventUpdateReq) {
-    return await request.put<EventDetail>(`/events/${id}`, data);
+    return await request.patch<EventDetail>(`/events/${id}`, data);
   },
   /** add user to an event */
-  async addUser(data: AddUserReq) {
-    return await request.post<EventDetail>('/events/add_user', data);
+  async addUser(eventId: string, data: AddUserReq) {
+    return await request.patch<EventDetail>(`/events/${eventId}/add_user`, data);
   },
   /** remove user from an event */
-  async removeUser(data: RemoveUserReq) {
-    return await request.post<EventDetail>('/events/remove_user', data);
+  async removeUser(eventId: string, data: RemoveUserReq) {
+    return await request.patch<EventDetail>(`/events/${eventId}/remove_user`, data);
   },
   /** change event's host */
-  async changeHost(data: ChangeHostReq) {
-    return await request.post<EventDetail>('/events/change_host', data);
+  async changeHost(eventId: string, data: ChangeHostReq) {
+    return await request.patch<EventDetail>(`/events/${eventId}/change_host`, data);
   },
 };

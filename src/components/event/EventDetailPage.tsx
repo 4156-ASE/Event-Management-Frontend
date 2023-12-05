@@ -77,7 +77,7 @@ function UserAvatar({ isHost, eventId, user, onChangeParticipants }: UserAvatarP
                     okText: 'Confirm',
                     cancelText: 'Cancel',
                     onOk: async () => {
-                      const resp = await APIs.changeHost({ eventId, userId: user.id });
+                      const resp = await APIs.changeHost(eventId, { userId: user.id });
 
                       if (resp.status !== 201) {
                         Toast.error('Failed to transfer host.');
@@ -108,7 +108,7 @@ function UserAvatar({ isHost, eventId, user, onChangeParticipants }: UserAvatarP
                     okText: 'Remove',
                     cancelText: 'Cancel',
                     onOk: async () => {
-                      const resp = await APIs.removeUser({ eventId, userId: user.id });
+                      const resp = await APIs.removeUser(eventId, { userId: user.id });
 
                       if (resp.status !== 201) {
                         Toast.error('Failed to remove user');
@@ -146,8 +146,7 @@ interface AddModalProps {
 function AddModal({ visible, onOk, onCancel, eventId }: AddModalProps) {
   const [email, setEmail] = useState('');
   async function handleSubmit() {
-    const resp = await APIs.addUser({
-      eventId,
+    const resp = await APIs.addUser(eventId, {
       email,
     });
 
