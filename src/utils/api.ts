@@ -34,6 +34,8 @@ export const APIs = {
   async getEvent(id: string) {
     return await request.get<EventDetail>(`/events/${id}`);
   },
+
+  
   /** create an event */
   async createEvent(data: EventCreateReq) {
     return await request.post<EventDetail>('/events', data);
