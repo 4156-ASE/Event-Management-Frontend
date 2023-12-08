@@ -8,6 +8,8 @@ import {
   EventDetail,
   EventUpdateReq,
   RemoveUserReq,
+  UpdateUserDetail,
+  UserDetail,
 } from './dto';
 import { request } from './request';
 
@@ -58,6 +60,10 @@ export const APIs = {
   },
   /**  */
   async getProfile() {
-    return await request.get<EventDetail>(`/users/me`);
-  }
+    return await request.get<UserDetail>(`/users/me`);
+  },
+
+  async updateUser(userID: string, data: UpdateUserDetail) {
+    return await request.patch<UpdateUserDetail>(`/users/me/${userID}`, data);
+  },
 };

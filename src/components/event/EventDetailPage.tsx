@@ -64,34 +64,6 @@ function UserAvatar({ isHost, eventId, user, onChangeParticipants }: UserAvatarP
           </Dropdown.Item>
           {!isHost && (
             <>
-              <Dropdown.Item
-                onClick={() => {
-                  Modal.warning({
-                    title: 'Transfer host to participant',
-                    content: (
-                      <div>
-                        Will you transfer your host to user:{' '}
-                        <span className="font-bold">{getName(user)}</span>
-                      </div>
-                    ),
-                    okText: 'Confirm',
-                    cancelText: 'Cancel',
-                    onOk: async () => {
-                      try {
-                        const resp = await APIs.changeHost(eventId, { userId: user.id });
-
-                        onChangeParticipants(resp.data);
-                        Toast.success('Transfer host success.');
-                      } catch (e: any) {
-                        Toast.error('Failed to transfer host. ' + e.response.data.message);
-                        console.error(e);
-                      }
-                    },
-                  });
-                }}
-              >
-                Transfer Host
-              </Dropdown.Item>
               <Button
                 type="danger"
                 theme="solid"
@@ -143,12 +115,18 @@ interface AddModalProps {
 
 function AddModal({ visible, onOk, onCancel, eventId }: AddModalProps) {
   const [email, setEmail] = useState('');
+  const [firstname, setFirstName] = useState('');
+  const [lastname, setLastName] = useState('');
   async function handleSubmit() {
     try {
       const resp = await APIs.addUser(eventId, {
-        email,
+        email : email,
+        firstname : firstname, 
+        lastname : lastname
       });
-
+      setEmail('');
+      setFirstName('');
+      setLastName('');
       onOk(resp.data);
     } catch (e: any) {
       Toast.error('Failed to add user. ' + e.response.data.message);
@@ -169,6 +147,10 @@ function AddModal({ visible, onOk, onCancel, eventId }: AddModalProps) {
     >
       <Label>Email</Label>
       <Input value={email} onChange={(v) => setEmail(v)} />
+      <Label>First Name</Label>
+      <Input value={firstname} onChange={(v) => setFirstName(v)} />
+      <Label>Last Name</Label>
+      <Input value={lastname} onChange={(v) => setLastName(v)} />
     </Modal>
   );
 }
@@ -276,7 +258,6 @@ function Inner({ id }: { id: string }) {
 
 export function EventDetailPage() {
   const navigate = useNavigate();
-
   const params = useParams<{
     id: string;
   }>();

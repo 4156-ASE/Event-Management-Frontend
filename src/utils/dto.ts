@@ -41,6 +41,14 @@ export interface UserDetail {
   firstname: string;
 }
 
+export interface UpdateUserDetail {
+  email: string;
+
+  lastname: string;
+
+  firstname: string;
+}
+
 export interface EventDetail {
   id: string;
 
@@ -81,10 +89,20 @@ export interface EventUpdateReq {
   end_time?: string;
 
   location?: string;
+  
+  hosts?: UserDetail, 
+  participants?: UserDetail[];
+
+  host_name?: string;
+  host_email?: string;
+  participants_email?: string;
+  participants_name?: string;
 }
 
 export interface AddUserReq {
   email: string;
+  firstname: string;
+  lastname: string;
 }
 
 export interface RemoveUserReq {

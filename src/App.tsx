@@ -14,6 +14,7 @@ import en_US from '@douyinfe/semi-ui/lib/es/locale/source/en_US';
 import { LocaleProvider } from '@douyinfe/semi-ui';
 import { EventDetailPage } from './components/event/EventDetailPage';
 import { APIs } from './utils/api';
+import ProfileForm from './components/profile/ProfileForm';
 
 function InnerRoutes() {
   const { auth } = useContext(AuthContext);
@@ -23,7 +24,7 @@ function InnerRoutes() {
       <Route path="/" element={<Landing />} />
       <Route path="/create" element={<CreateEventForm />} />
       <Route path="/events" element={<Events />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/profile" element={<ProfileForm />} />
       <Route path="/event/:id" element={<SingleEvent />} />
       <Route path="/event/details/:id" element={<EventDetailPage />} />
       <Route path="*" element={<Navigate to="/events" replace />} />
